@@ -1,0 +1,12 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Run Parking GUI",
+            "request": "launch",
+            "mainClass": "ParkingGUI",
+            "vmArgs": "--module-path \"D:/UNI/Advanced programming/javafx-sdk-26.0.1/lib\" --add-modules javafx.controls,javafx.fxml"
+        }
+    ]
+}

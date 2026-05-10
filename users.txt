@@ -1,0 +1,3 @@
+admin,MTIzNDU2,ADMIN
+entry,MTIzNA==,ENTRY
+exit,MTIzNA==,EXIT
