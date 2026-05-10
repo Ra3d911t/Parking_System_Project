@@ -9,6 +9,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 
+import java.io.FileWriter;
+import java.io.IOException;
+
 public class ParkingGUI extends Application {
 
     private ParkingService service = new ParkingService();
@@ -119,7 +122,7 @@ public class ParkingGUI extends Application {
         root.setCenter(centerWrapper);
 
         primaryStage.setTitle("Parking System – Dashboard (" + user.getRole() + ")");
-        primaryStage.setScene(new Scene(root, 800, 620));
+        primaryStage.setScene(new Scene(root, 850, 650));
     }
 
     private VBox buildEntryPanel() {
@@ -488,15 +491,37 @@ public class ParkingGUI extends Application {
         Button parkedReportBtn = new Button("Parked Cars");
         Button revenueReportBtn = new Button("Revenue & Shifts");
         Button usersReportBtn = new Button("All Users");
+        Button exportReportBtn = new Button("Export Report");
 
         styleBtn(parkedReportBtn, BLUE);
         styleBtn(revenueReportBtn, BLUE);
         styleBtn(usersReportBtn, BLUE);
+        styleBtn(exportReportBtn, GREEN);
 
         TextArea reportArea = new TextArea();
         reportArea.setEditable(false);
         reportArea.setPrefHeight(170);
         styleTextArea(reportArea);
+
+        exportReportBtn.setOnAction(e -> {
+            String report = reportArea.getText();
+
+            if (report == null || report.trim().isEmpty()) {
+                showAlert("No Report", "Please generate a report first.",
+                        Alert.AlertType.WARNING);
+                return;
+            }
+
+            boolean saved = saveReportToFile(report);
+
+            if (saved) {
+                showAlert("Report Saved", "Report exported successfully to reports.txt",
+                        Alert.AlertType.INFORMATION);
+            } else {
+                showAlert("Error", "Failed to save report.",
+                        Alert.AlertType.ERROR);
+            }
+        });
 
         parkedReportBtn.setOnAction(e -> {
             StringBuilder sb = new StringBuilder("Parked Cars Report\n");
@@ -544,7 +569,7 @@ public class ParkingGUI extends Application {
             reportArea.setText(sb.toString());
         });
 
-        HBox repBtns = new HBox(10, parkedReportBtn, revenueReportBtn, usersReportBtn);
+        HBox repBtns = new HBox(10, parkedReportBtn, revenueReportBtn, usersReportBtn, exportReportBtn);
 
         Separator s1 = new Separator();
         Separator s2 = new Separator();
@@ -568,6 +593,22 @@ public class ParkingGUI extends Application {
         stylePanel(panel);
 
         return panel;
+    }
+
+    private boolean saveReportToFile(String report) {
+        try (FileWriter writer = new FileWriter("reports.txt", true)) {
+
+            writer.write("=====================================\n");
+            writer.write("           PARKING REPORT            \n");
+            writer.write("=====================================\n");
+            writer.write(report);
+            writer.write("\n\n");
+
+            return true;
+
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     private void refreshSpotsLabel(Label label) {
